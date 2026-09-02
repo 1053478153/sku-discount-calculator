@@ -1,0 +1,1731 @@
+<html lang="zh-CN" data-trae-theme="light"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026定价表</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F2F2F5;--surface:#FFFFFF;--surface-muted:#F7F7F8;--surface-muted-2:#EFEFF2;
+  --text:#171717;--text-muted:#52525B;--border:rgba(23,23,23,.10);
+  --brand:#4B3FE3;--brand-strong:#3C2ECA;--brand-soft:#F2F7FF;--brand-text:#1A1759;--brand-on:#FFFFFF;
+  --danger:#E8463A;
+  --radius:8px;--radius-card:12px;--radius-full:999px;
+  --sp-4:4px;--sp-8:8px;--sp-12:12px;--sp-16:16px;--sp-20:20px;--sp-24:24px;
+  --font-sans:"SF Pro Text","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-metric:"Inter","SF Pro Text","PingFang SC",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{color-scheme:dark;
+    --bg:#101012;--surface:#1C1C1F;--surface-muted:#26262A;--surface-muted-2:#2E2E33;
+    --text:#EDEDEF;--text-muted:#A1A1AA;--border:rgba(229,229,229,.12);
+    --brand:#6054F1;--brand-strong:#7A70F5;--brand-soft:#1A1759;--brand-text:#CFD8FF;--brand-on:#FFFFFF;}
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font:400 14px/1.6 var(--font-sans);-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1340px;margin:0 auto;padding:var(--sp-24) var(--sp-20) 64px;}
+
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-16);flex-wrap:wrap;margin-bottom:var(--sp-20);}
+.title{font:600 22px/1.3 var(--font-sans);margin:0;}
+.subtitle{color:var(--text-muted);font-size:13px;margin-top:var(--sp-4);}
+.save-state{font-size:12px;color:var(--text-muted);margin-top:var(--sp-8);}
+.actions{display:flex;gap:var(--sp-8);flex-wrap:wrap;}
+.btn{font:500 13px var(--font-sans);border-radius:var(--radius);padding:8px 14px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:border-color .12s,background .12s;}
+.btn:hover{border-color:var(--brand);}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-on);}
+.btn.primary:hover{background:var(--brand-strong);}
+.btn.ghost{background:transparent;}
+.btn.danger{color:var(--danger);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+
+.toolbar{margin-bottom:var(--sp-16);display:flex;justify-content:flex-end;}
+.search-box{display:flex;align-items:center;gap:var(--sp-8);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-full);padding:7px 14px;min-width:260px;transition:border-color .12s;}
+.search-box:focus-within{border-color:var(--brand);}
+.search-icon{font-size:13px;opacity:.6;}
+.search-input{flex:1;border:none;outline:none;background:transparent;font:500 13px var(--font-sans);color:var(--text);min-width:0;}
+.search-clear{border:none;background:var(--surface-muted-2);color:var(--text-muted);border-radius:var(--radius-full);width:18px;height:18px;font-size:10px;line-height:18px;cursor:pointer;padding:0;text-align:center;}
+.search-clear:hover{color:var(--danger);}
+.no-match{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-card);padding:var(--sp-20);text-align:center;color:var(--text-muted);font-size:13px;margin-bottom:var(--sp-20);}
+.rules{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);padding:var(--sp-12) var(--sp-16);margin-bottom:var(--sp-20);display:flex;gap:var(--sp-16);flex-wrap:wrap;font-size:12.5px;color:var(--text-muted);}
+.rules-bottom{margin-bottom:0;margin-top:var(--sp-8);}
+.rules b{color:var(--text);font-weight:600;}
+.rules .dot{color:var(--brand);font-weight:700;}
+
+.group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-card);padding:var(--sp-16) var(--sp-20) var(--sp-20);margin-bottom:var(--sp-20);}
+.group-head{display:flex;align-items:center;gap:var(--sp-12);flex-wrap:wrap;margin-bottom:var(--sp-12);}
+.group-name{font:600 16px var(--font-sans);color:var(--text);background:transparent;border:1px solid transparent;border-radius:var(--radius);padding:6px 10px;min-width:140px;}
+.group-name:hover{border-color:var(--border);}
+.group-name:focus{outline:none;border-color:var(--brand);background:var(--surface-muted);}
+.count-badge{font:500 12px var(--font-sans);color:var(--brand);background:var(--brand-soft);border-radius:var(--radius-full);padding:2px 10px;}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius-full);overflow:hidden;background:var(--surface);}
+.seg-btn{border:none;background:transparent;color:var(--text-muted);font:500 12px var(--font-sans);padding:5px 14px;cursor:pointer;transition:background .12s,color .12s;}
+.seg-btn:hover{color:var(--text);}
+.seg-btn.active{background:var(--brand);color:var(--brand-on);}
+.seg-btn.active.noguobu{background:var(--text);}
+.btn-params{font:500 12px var(--font-sans);border:1px solid var(--border);background:var(--surface);color:var(--text-muted);border-radius:var(--radius-full);padding:5px 12px;cursor:pointer;}
+.btn-params:hover{border-color:var(--brand);color:var(--brand);}
+.btn-params.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);}
+.params{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin:0 0 12px;display:none;gap:24px;flex-wrap:wrap;align-items:flex-start;font-size:12.5px;}
+.params.open{display:flex;}
+.param-item{display:flex;align-items:center;gap:6px;color:var(--text-muted);white-space:nowrap;}
+.param-item b{color:var(--text);font-weight:600;}
+.param-item input{width:64px;font:600 13px var(--font-mono);text-align:right;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;}
+.param-item input:disabled{opacity:.4;}
+.param-item input:focus{outline:none;border-color:var(--brand);}
+.tiers-box{min-width:340px;}
+.tiers-title{color:var(--text-muted);margin-bottom:4px;}
+.tier-row{display:flex;align-items:center;gap:4px;margin-top:6px;color:var(--text-muted);}
+.tier-row input{width:64px;font:600 12px var(--font-mono);text-align:right;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px 8px;color:var(--text);}
+.tier-row input:focus{outline:none;border-color:var(--brand);}
+.tier-del{border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:12px;padding:2px 6px;border-radius:var(--radius);}
+.tier-del:hover{color:var(--danger);background:var(--surface);}
+.tier-add{margin-top:8px;font:500 12px var(--font-sans);border:1px dashed var(--border);background:transparent;color:var(--brand);border-radius:var(--radius);padding:4px 12px;cursor:pointer;}
+.tier-add:hover{border-color:var(--brand);background:var(--brand-soft);}
+.param-note{width:100%;color:var(--text-muted);font-size:11.5px;margin-top:2px;}
+.group-head .spacer{flex:1;}
+
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;}
+thead th{font:600 12px var(--font-sans);color:var(--text-muted);background:var(--surface-muted);text-align:right;padding:10px 10px;white-space:nowrap;border-bottom:1px solid var(--border);}
+thead th:first-child{text-align:left;border-top-left-radius:var(--radius);}
+thead th.tg{color:var(--brand-text);background:var(--brand-soft);}
+thead th.intcol{color:var(--brand-text);}
+tbody td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:nth-child(even) td{background:var(--surface-muted);}
+tbody tr:hover td{background:var(--brand-soft);}
+td.r, .r{text-align:right;font:600 13px var(--font-mono);color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums;}
+td .sub{font:500 11px var(--font-sans);color:var(--text-muted);margin-top:1px;white-space:nowrap;}
+td .sub.diff{color:var(--brand);}
+.fin{color:var(--brand);font:700 14px var(--font-metric);}
+.zhe{color:var(--text-muted);font:500 12px var(--font-sans);}
+.cell-in{width:100%;font:500 13px var(--font-sans);color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;}
+.cell-in:focus{outline:none;border-color:var(--brand);}
+td.c-name{min-width:150px;}
+td.c-lp,td.c-int,td.c-tg{min-width:120px;}
+td.c-lp input,td.c-tg input{font:600 13px var(--font-mono);text-align:right;}
+td.c-tg input{border-color:var(--brand);}
+td.c-tg{background:var(--brand-soft);}
+tbody tr:nth-child(even) td.c-tg{background:var(--brand-soft);}
+td.c-int input{font:700 13px var(--font-mono);text-align:right;color:var(--brand);border-color:var(--brand);background:var(--brand-soft);}
+td.c-int input::placeholder{color:var(--text-muted);font-weight:500;}
+td.c-int .intsub{font:500 11px var(--font-sans);color:var(--text-muted);margin-top:2px;min-height:15px;}
+td.c-int .intsub.manual{color:var(--brand);}
+.row-del{border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:13px;padding:4px 6px;border-radius:var(--radius);}
+.row-del:hover{color:var(--danger);background:var(--surface);}
+.empty-row{text-align:center;color:var(--text-muted);font-size:13px;padding:var(--sp-16);}
+.empty-state{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-card);padding:48px var(--sp-20);text-align:center;color:var(--text-muted);}
+.empty-state .btn{margin-top:var(--sp-16);}
+</style>
+<style data-trae-edit-ui="true" id="trae-previewer-tools-styles">:root {
+  --trae-layer-image-download: 89990;
+  --trae-layer-browser-inspect-overlay: 90000;
+  --trae-layer-browser-inspect-highlight: 90010;
+  --trae-layer-browser-inspect-action: 90020;
+  --trae-layer-text-selection-action: 90030;
+  --trae-layer-edit-tooltip: 100095;
+}
+:root,
+[data-trae-theme='dark'] {
+  --trae-bg-base-default: #171717;
+  --trae-bg-menu: #222427;
+  --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04);
+  --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08);
+  --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12);
+  --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16);
+  --trae-bg-invert: #f5f9fe;
+  --trae-bg-invert-hover: #e8ecf0;
+  --trae-bg-invert-active: #dce0e4;
+  --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35);
+  --bg-bg-brand-popup: rgba(106, 111, 255, 0.15);
+  --trae-border-l1: #e0e2f217;
+  --trae-border-l2: rgba(255, 255, 255, 0.12);
+  --trae-border-l3: rgba(255, 255, 255, 0.08);
+  --trae-border-neutral-l3: rgba(229, 229, 229, 0.20);
+  --trae-border-brand: #6a6fff;
+  --trae-text-default: #f5f9fe;
+  --trae-text-default-hover: #f5f9fe;
+  --trae-text-default-active: #f5f9fe;
+  --trae-text-secondary: rgba(245, 249, 254, 0.5);
+  --trae-text-tertiary: rgba(245, 249, 254, 0.4);
+  --trae-text-disabled: #666b75;
+  --trae-text-onaccent: #222427;
+  --trae-icon-default: #f5f9fe;
+  --trae-icon-secondary: rgba(245, 249, 254, 0.5);
+  --trae-icon-brand: #6a6fff;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #222427;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #387bff;
+  --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18);
+  --trae-status-success-default: #33c192;
+  --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18);
+  --trae-status-error-default: #f65a5a;
+  --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(106, 111, 255, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+[data-trae-theme='light'] {
+  --trae-bg-base-default: #fafafa;
+  --trae-bg-menu: #ffffff;
+  --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04);
+  --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06);
+  --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08);
+  --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12);
+  --trae-bg-invert: #1f2328;
+  --trae-bg-invert-hover: #32383f;
+  --trae-bg-invert-active: #444d56;
+  --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22);
+  --bg-bg-brand-popup: rgba(170, 183, 255, 0.36);
+  --trae-border-l1: rgba(0, 0, 0, 0.1);
+  --trae-border-l2: rgba(0, 0, 0, 0.12);
+  --trae-border-l3: rgba(0, 0, 0, 0.08);
+  --trae-border-neutral-l3: rgba(115, 115, 115, 0.36);
+  --trae-border-brand: #4b3fe3;
+  --trae-text-default: #1f2328;
+  --trae-text-default-hover: #111214;
+  --trae-text-default-active: #111214;
+  --trae-text-secondary: rgba(31, 35, 40, 0.5);
+  --trae-text-tertiary: rgba(31, 35, 40, 0.4);
+  --trae-text-disabled: #a1a1a1;
+  --trae-text-onaccent: #ffffff;
+  --trae-icon-default: #1f2328;
+  --trae-icon-secondary: rgba(31, 35, 40, 0.5);
+  --trae-icon-brand: #4b3fe3;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #ffffff;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #2f74ff;
+  --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12);
+  --trae-status-success-default: #15a877;
+  --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12);
+  --trae-status-error-default: #e8463a;
+  --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(75, 63, 227, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+@keyframes trae-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes trae-edit-bar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes trae-edit-bar-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes trae-edit-panel-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body *:not([data-trae-edit-ui]):not([data-trae-edit-ui] *) {
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel),
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * {
+  pointer-events: none !important;
+}
+
+.trae-browser-inspect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--trae-layer-browser-inspect-overlay);
+  pointer-events: auto;
+  background: transparent;
+}
+
+.trae-browser-inspect-highlight-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--trae-layer-browser-inspect-highlight);
+  display: none;
+}
+
+.trae-browser-inspect-highlight-tag {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 18px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: var(--trae-status-success-default);
+  color: var(--trae-text-onaccent);
+  font-size: 12px;
+  font-weight: 400;
+  display: none;
+  align-items: center;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-highlight-box-show {
+  display: flex;
+}
+
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show {
+  display: none;
+}
+
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show {
+  display: block !important;
+}
+
+.trae-browser-inspect-select-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-select-highlight-box {
+  background: transparent !important;
+}
+
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag {
+  background-color: var(--trae-status-success-default);
+}
+
+.trae-add-to-chat-card {
+  display: block;
+  overflow: hidden;
+  background: var(--trae-bg-menu);
+  border: 1px solid var(--trae-border-l1);
+  border-radius: 8px;
+  box-shadow: var(--trae-floating-shadow);
+  transition:
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trae-add-to-chat-content {
+  position: relative;
+  width: max-content;
+}
+
+.trae-fade-exit {
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.trae-fade-enter {
+  opacity: 1;
+  transition: opacity 0.2s ease-in;
+}
+
+.trae-buttons-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  background: transparent;
+}
+
+.trae-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.trae-action-button:hover {
+  background: var(--trae-bg-overlay-l2);
+}
+
+.trae-action-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-action-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-action-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-icon-default);
+  flex-shrink: 0;
+}
+
+.trae-action-button-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+}
+
+.trae-edit-toolbar-button-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, #4b3fe3) !important;
+  font-weight: bold !important;
+}
+
+.trae-edit-toolbar-button-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:hover,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:hover,
+.trae-edit-toolbar button[data-action='font-decrease']:hover,
+.trae-edit-toolbar button[data-action='font-increase']:hover,
+.trae-edit-toolbar button[data-action^='align-']:hover {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:active,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:active,
+.trae-edit-toolbar button[data-action='font-decrease']:active,
+.trae-edit-toolbar button[data-action='font-increase']:active,
+.trae-edit-toolbar button[data-action^='align-']:active {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important;
+}
+
+.trae-comment-input {
+  background: transparent;
+  color: var(--trae-text-default);
+  caret-color: var(--trae-text-default);
+}
+
+.trae-comment-input::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-point-edit-bar,
+.trae-point-comment-input-bar,
+.trae-comment-only-panel {
+  transform-origin: top center;
+  will-change: opacity, transform;
+}
+
+.trae-edit-panel:not(.trae-edit-panel-leave) {
+  pointer-events: auto !important;
+}
+
+.trae-edit-bar-enter {
+  animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both;
+}
+
+.trae-edit-bar-leave {
+  pointer-events: none;
+  animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel-leave {
+  pointer-events: none;
+  animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel [data-trae-tooltip] {
+  position: relative;
+}
+
+.trae-edit-panel [data-trae-tooltip]::after {
+  content: attr(data-trae-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: var(--trae-layer-edit-tooltip);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  color: var(--trae-text-onaccent, var(--text-text-onaccent));
+  box-shadow: var(--trae-floating-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.039px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateX(-50%);
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 5px);
+  z-index: var(--trae-layer-edit-tooltip);
+  width: 8px;
+  height: 4px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]:hover::after,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::after,
+.trae-edit-panel [data-trae-tooltip]:hover::before,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.trae-comment-btn {
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-comment-btn:disabled {
+  cursor: not-allowed;
+}
+
+.trae-comment-btn:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-comment-btn-primary {
+  background: var(--trae-bg-invert);
+  color: var(--trae-text-onaccent);
+}
+
+.trae-comment-btn-primary:hover:not(:disabled) {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-comment-btn-primary:active:not(:disabled) {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-comment-btn-primary:disabled {
+  background: var(--trae-bg-invert-disabled);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-secondary {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-secondary:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-comment-btn-secondary:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l4);
+}
+
+.trae-comment-btn-secondary:disabled {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-text {
+  background: transparent;
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-text:hover:not(:disabled) {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1));
+  color: var(--trae-text-default-hover);
+}
+
+.trae-comment-btn-text:active:not(:disabled) {
+  border-radius: 8px;
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default-active);
+}
+
+.trae-comment-btn-text:disabled {
+  background: transparent;
+  color: var(--trae-text-disabled);
+}
+
+.trae-marking-btn {
+  justify-content: center;
+}
+
+.trae-marking-btn:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l1) !important;
+}
+
+.trae-marking-btn-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l2) !important;
+}
+
+.trae-marking-btn:disabled {
+  color: var(--trae-text-disabled) !important;
+  cursor: not-allowed !important;
+}
+
+.trae-action-button-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--trae-icon-secondary);
+  flex-shrink: 0;
+}
+
+.trae-shortcut-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.trae-shortcut-key {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 12px;
+  color: var(--trae-icon-secondary);
+}
+
+.trae-add-to-chat-divider {
+  width: 2px;
+  height: 12px;
+  padding: 0 6px;
+  box-sizing: content-box;
+  background-clip: content-box;
+  background-color: var(--trae-border-l2);
+  flex-shrink: 0;
+}
+
+.trae-editor-view {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  padding: 8px;
+  background: transparent;
+}
+
+.trae-editor-text-container {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: var(--trae-bg-overlay-l1);
+  border: 1px solid var(--trae-border-l3);
+  border-radius: 4px;
+  gap: 8px;
+}
+
+.trae-editor-textarea {
+  flex: 1;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--trae-text-default);
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  max-height: 140px;
+}
+
+.trae-editor-textarea::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-editor-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out,
+    margin-top 0.2s ease-out;
+}
+
+.trae-editor-action-bar-visible {
+  max-height: 32px;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+.trae-editor-cancel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 4px;
+  background: var(--trae-bg-overlay-l2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-cancel-button:hover {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-cancel-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--trae-bg-invert);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-submit-button:hover {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-editor-submit-button:active {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-editor-submit-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-submit-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-onaccent);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: var(--trae-icon-onaccent);
+  flex-shrink: 0;
+}
+
+.trae-success-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 32px;
+  white-space: nowrap;
+}
+
+.trae-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-status-success);
+  flex-shrink: 0;
+}
+
+.trae-success-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--trae-text-default);
+  user-select: none;
+}
+</style><style data-trae-pptx-captured-css="true">:root { color-scheme: light; --bg: #F2F2F5; --surface: #FFFFFF; --surface-muted: #F7F7F8; --surface-muted-2: #EFEFF2; --text: #171717; --text-muted: #52525B; --border: rgba(23,23,23,.10); --brand: #4B3FE3; --brand-strong: #3C2ECA; --brand-soft: #F2F7FF; --brand-text: #1A1759; --brand-on: #FFFFFF; --danger: #E8463A; --radius: 8px; --radius-card: 12px; --radius-full: 999px; --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px; --sp-20: 20px; --sp-24: 24px; --font-sans: "SF Pro Text","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",system-ui,sans-serif; --font-metric: "Inter","SF Pro Text","PingFang SC",system-ui,sans-serif; --font-mono: "JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: dark; --bg: #101012; --surface: #1C1C1F; --surface-muted: #26262A; --surface-muted-2: #2E2E33; --text: #EDEDEF; --text-muted: #A1A1AA; --border: rgba(229,229,229,.12); --brand: #6054F1; --brand-strong: #7A70F5; --brand-soft: #1A1759; --brand-text: #CFD8FF; --brand-on: #FFFFFF; }
+}
+* { box-sizing: border-box; }
+body { margin: 0px; background: var(--bg); color: var(--text); font: 400 14px/1.6 var(--font-sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1340px; margin: 0px auto; padding: var(--sp-24) var(--sp-20) 64px; }
+.topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; margin-bottom: var(--sp-20); }
+.title { font: 600 22px/1.3 var(--font-sans); margin: 0px; }
+.subtitle { color: var(--text-muted); font-size: 13px; margin-top: var(--sp-4); }
+.save-state { font-size: 12px; color: var(--text-muted); margin-top: var(--sp-8); }
+.actions { display: flex; gap: var(--sp-8); flex-wrap: wrap; }
+.btn { font: 500 13px var(--font-sans); border-radius: var(--radius); padding: 8px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: border-color 0.12s, background 0.12s; }
+.btn:hover { border-color: var(--brand); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: var(--brand-on); }
+.btn.primary:hover { background: var(--brand-strong); }
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--danger); }
+.btn.sm { padding: 5px 10px; font-size: 12px; }
+.toolbar { margin-bottom: var(--sp-16); display: flex; justify-content: flex-end; }
+.search-box { display: flex; align-items: center; gap: var(--sp-8); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 7px 14px; min-width: 260px; transition: border-color 0.12s; }
+.search-box:focus-within { border-color: var(--brand); }
+.search-icon { font-size: 13px; opacity: 0.6; }
+.search-input { flex: 1 1 0%; border: none; outline: none; background: transparent; font: 500 13px var(--font-sans); color: var(--text); min-width: 0px; }
+.search-clear { border: none; background: var(--surface-muted-2); color: var(--text-muted); border-radius: var(--radius-full); width: 18px; height: 18px; font-size: 10px; line-height: 18px; cursor: pointer; padding: 0px; text-align: center; }
+.search-clear:hover { color: var(--danger); }
+.no-match { background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-card); padding: var(--sp-20); text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: var(--sp-20); }
+.rules { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: var(--sp-12) var(--sp-16); margin-bottom: var(--sp-20); display: flex; gap: var(--sp-16); flex-wrap: wrap; font-size: 12.5px; color: var(--text-muted); }
+.rules-bottom { margin-bottom: 0px; margin-top: var(--sp-8); }
+.rules b { color: var(--text); font-weight: 600; }
+.rules .dot { color: var(--brand); font-weight: 700; }
+.group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: var(--sp-16) var(--sp-20) var(--sp-20); margin-bottom: var(--sp-20); }
+.group-head { display: flex; align-items: center; gap: var(--sp-12); flex-wrap: wrap; margin-bottom: var(--sp-12); }
+.group-name { font: 600 16px var(--font-sans); color: var(--text); background: transparent; border: 1px solid transparent; border-radius: var(--radius); padding: 6px 10px; min-width: 140px; }
+.group-name:hover { border-color: var(--border); }
+.group-name:focus { outline: none; border-color: var(--brand); background: var(--surface-muted); }
+.count-badge { font: 500 12px var(--font-sans); color: var(--brand); background: var(--brand-soft); border-radius: var(--radius-full); padding: 2px 10px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius-full); overflow: hidden; background: var(--surface); }
+.seg-btn { border: none; background: transparent; color: var(--text-muted); font: 500 12px var(--font-sans); padding: 5px 14px; cursor: pointer; transition: background 0.12s, color 0.12s; }
+.seg-btn:hover { color: var(--text); }
+.seg-btn.active { background: var(--brand); color: var(--brand-on); }
+.seg-btn.active.noguobu { background: var(--text); }
+.btn-params { font: 500 12px var(--font-sans); border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); border-radius: var(--radius-full); padding: 5px 12px; cursor: pointer; }
+.btn-params:hover { border-color: var(--brand); color: var(--brand); }
+.btn-params.on { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.params { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; margin: 0px 0px 12px; display: none; gap: 24px; flex-wrap: wrap; align-items: flex-start; font-size: 12.5px; }
+.params.open { display: flex; }
+.param-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); white-space: nowrap; }
+.param-item b { color: var(--text); font-weight: 600; }
+.param-item input { width: 64px; font: 600 13px var(--font-mono); text-align: right; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 8px; }
+.param-item input:disabled { opacity: 0.4; }
+.param-item input:focus { outline: none; border-color: var(--brand); }
+.tiers-box { min-width: 340px; }
+.tiers-title { color: var(--text-muted); margin-bottom: 4px; }
+.tier-row { display: flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--text-muted); }
+.tier-row input { width: 64px; font: 600 12px var(--font-mono); text-align: right; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 8px; color: var(--text); }
+.tier-row input:focus { outline: none; border-color: var(--brand); }
+.tier-del { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 12px; padding: 2px 6px; border-radius: var(--radius); }
+.tier-del:hover { color: var(--danger); background: var(--surface); }
+.tier-add { margin-top: 8px; font: 500 12px var(--font-sans); border: 1px dashed var(--border); background: transparent; color: var(--brand); border-radius: var(--radius); padding: 4px 12px; cursor: pointer; }
+.tier-add:hover { border-color: var(--brand); background: var(--brand-soft); }
+.param-note { width: 100%; color: var(--text-muted); font-size: 11.5px; margin-top: 2px; }
+.group-head .spacer { flex: 1 1 0%; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: separate; border-spacing: 0px; min-width: 1120px; }
+thead th { font: 600 12px var(--font-sans); color: var(--text-muted); background: var(--surface-muted); text-align: right; padding: 10px; white-space: nowrap; border-bottom: 1px solid var(--border); }
+thead th:first-child { text-align: left; border-top-left-radius: var(--radius); }
+thead th.tg { color: var(--brand-text); background: var(--brand-soft); }
+thead th.intcol { color: var(--brand-text); }
+tbody td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:nth-child(2n) td { background: var(--surface-muted); }
+tbody tr:hover td { background: var(--brand-soft); }
+td.r, .r { text-align: right; font-style: ; font-variant-ligatures: ; font-variant-caps: ; font-variant-east-asian: ; font-variant-alternates: ; font-variant-position: ; font-variant-emoji: ; font-weight: ; font-stretch: ; font-size: ; line-height: ; font-family: ; font-optical-sizing: ; font-size-adjust: ; font-kerning: ; font-feature-settings: ; font-variation-settings: ; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+td .sub { font: 500 11px var(--font-sans); color: var(--text-muted); margin-top: 1px; white-space: nowrap; }
+td .sub.diff { color: var(--brand); }
+.fin { color: var(--brand); font: 700 14px var(--font-metric); }
+.zhe { color: var(--text-muted); font: 500 12px var(--font-sans); }
+.cell-in { width: 100%; font: 500 13px var(--font-sans); color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; }
+.cell-in:focus { outline: none; border-color: var(--brand); }
+td.c-name { min-width: 150px; }
+td.c-lp, td.c-int, td.c-tg { min-width: 120px; }
+td.c-lp input, td.c-tg input { font: 600 13px var(--font-mono); text-align: right; }
+td.c-tg input { border-color: var(--brand); }
+td.c-tg { background: var(--brand-soft); }
+tbody tr:nth-child(2n) td.c-tg { background: var(--brand-soft); }
+td.c-int input { font: 700 13px var(--font-mono); text-align: right; color: var(--brand); border-color: var(--brand); background: var(--brand-soft); }
+td.c-int input::placeholder { color: var(--text-muted); font-weight: 500; }
+td.c-int .intsub { font: 500 11px var(--font-sans); color: var(--text-muted); margin-top: 2px; min-height: 15px; }
+td.c-int .intsub.manual { color: var(--brand); }
+.row-del { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 13px; padding: 4px 6px; border-radius: var(--radius); }
+.row-del:hover { color: var(--danger); background: var(--surface); }
+.empty-row { text-align: center; color: var(--text-muted); font-size: 13px; padding: var(--sp-16); }
+.empty-state { background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-card); padding: 48px var(--sp-20); text-align: center; color: var(--text-muted); }
+.empty-state .btn { margin-top: var(--sp-16); }
+:root { --trae-layer-image-download: 89990; --trae-layer-browser-inspect-overlay: 90000; --trae-layer-browser-inspect-highlight: 90010; --trae-layer-browser-inspect-action: 90020; --trae-layer-text-selection-action: 90030; --trae-layer-edit-tooltip: 100095; }
+:root, [data-trae-theme="dark"] { --trae-bg-base-default: #171717; --trae-bg-menu: #222427; --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04); --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08); --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12); --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16); --trae-bg-invert: #f5f9fe; --trae-bg-invert-hover: #e8ecf0; --trae-bg-invert-active: #dce0e4; --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35); --bg-bg-brand-popup: rgba(106, 111, 255, 0.15); --trae-border-l1: #e0e2f217; --trae-border-l2: rgba(255, 255, 255, 0.12); --trae-border-l3: rgba(255, 255, 255, 0.08); --trae-border-neutral-l3: rgba(229, 229, 229, 0.20); --trae-border-brand: #6a6fff; --trae-text-default: #f5f9fe; --trae-text-default-hover: #f5f9fe; --trae-text-default-active: #f5f9fe; --trae-text-secondary: rgba(245, 249, 254, 0.5); --trae-text-tertiary: rgba(245, 249, 254, 0.4); --trae-text-disabled: #666b75; --trae-text-onaccent: #222427; --trae-icon-default: #f5f9fe; --trae-icon-secondary: rgba(245, 249, 254, 0.5); --trae-icon-brand: #6a6fff; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #222427; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #387bff; --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18); --trae-status-success-default: #33c192; --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18); --trae-status-error-default: #f65a5a; --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32); --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16); --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(106, 111, 255, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+[data-trae-theme="light"] { --trae-bg-base-default: #fafafa; --trae-bg-menu: #ffffff; --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04); --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06); --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08); --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12); --trae-bg-invert: #1f2328; --trae-bg-invert-hover: #32383f; --trae-bg-invert-active: #444d56; --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22); --bg-bg-brand-popup: rgba(170, 183, 255, 0.36); --trae-border-l1: rgba(0, 0, 0, 0.1); --trae-border-l2: rgba(0, 0, 0, 0.12); --trae-border-l3: rgba(0, 0, 0, 0.08); --trae-border-neutral-l3: rgba(115, 115, 115, 0.36); --trae-border-brand: #4b3fe3; --trae-text-default: #1f2328; --trae-text-default-hover: #111214; --trae-text-default-active: #111214; --trae-text-secondary: rgba(31, 35, 40, 0.5); --trae-text-tertiary: rgba(31, 35, 40, 0.4); --trae-text-disabled: #a1a1a1; --trae-text-onaccent: #ffffff; --trae-icon-default: #1f2328; --trae-icon-secondary: rgba(31, 35, 40, 0.5); --trae-icon-brand: #4b3fe3; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #ffffff; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #2f74ff; --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12); --trae-status-success-default: #15a877; --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12); --trae-status-error-default: #e8463a; --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18); --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06); --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(75, 63, 227, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+@keyframes trae-spin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes trae-edit-bar-enter { 
+  0% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0px) scale(1); }
+}
+@keyframes trae-edit-bar-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+@keyframes trae-edit-panel-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body :not([data-trae-edit-ui]):not([data-trae-edit-ui] *) { transition: none !important; animation-play-state: paused !important; }
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel), .trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * { pointer-events: none !important; }
+.trae-browser-inspect-overlay { position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; z-index: var(--trae-layer-browser-inspect-overlay); pointer-events: auto; background: transparent; }
+.trae-browser-inspect-highlight-box { position: absolute; top: 0px; left: 0px; z-index: var(--trae-layer-browser-inspect-highlight); display: none; }
+.trae-browser-inspect-highlight-tag { position: absolute; left: 0px; top: 0px; height: 18px; padding: 0px 6px; box-sizing: border-box; border-radius: 4px; background-color: var(--trae-status-success-default); color: var(--trae-text-onaccent); font-size: 12px; font-weight: 400; display: none; align-items: center; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-highlight-box-show { display: flex; }
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show { display: none; }
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show { display: block !important; }
+.trae-browser-inspect-select-button { position: absolute; top: 0px; left: 0px; display: none; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-select-highlight-box { background: transparent !important; }
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag { background-color: var(--trae-status-success-default); }
+.trae-add-to-chat-card { display: block; overflow: hidden; background: var(--trae-bg-menu); border: 1px solid var(--trae-border-l1); border-radius: 8px; box-shadow: var(--trae-floating-shadow); transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+.trae-add-to-chat-content { position: relative; width: max-content; }
+.trae-fade-exit { opacity: 0; transition: opacity 0.15s ease-out; }
+.trae-fade-enter { opacity: 1; transition: opacity 0.2s ease-in; }
+.trae-buttons-view { display: flex; align-items: center; gap: 6px; padding: 4px; background: transparent; }
+.trae-action-button { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: transparent; border: none; border-radius: 4px; cursor: pointer; transform: none !important; transition: none !important; animation: auto ease 0s 1 normal none running none !important; }
+.trae-action-button:hover { background: var(--trae-bg-overlay-l2); }
+.trae-action-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-action-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-action-button-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-icon-default); flex-shrink: 0; }
+.trae-action-button-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; }
+.trae-edit-toolbar-button-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, #4b3fe3) !important; font-weight: bold !important; }
+.trae-edit-toolbar-button-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:hover, .trae-edit-toolbar button[data-action="text-align-dropdown"]:hover, .trae-edit-toolbar button[data-action="font-decrease"]:hover, .trae-edit-toolbar button[data-action="font-increase"]:hover, .trae-edit-toolbar button[data-action^="align-"]:hover { border-radius: 8px; background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:active, .trae-edit-toolbar button[data-action="text-align-dropdown"]:active, .trae-edit-toolbar button[data-action="font-decrease"]:active, .trae-edit-toolbar button[data-action="font-increase"]:active, .trae-edit-toolbar button[data-action^="align-"]:active { border-radius: 8px; background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important; }
+.trae-comment-input { background: transparent; color: var(--trae-text-default); caret-color: var(--trae-text-default); }
+.trae-comment-input::placeholder { color: var(--trae-text-tertiary); }
+.trae-point-edit-bar, .trae-point-comment-input-bar, .trae-comment-only-panel { transform-origin: center top; will-change: opacity, transform; }
+.trae-edit-panel:not(.trae-edit-panel-leave) { pointer-events: auto !important; }
+.trae-edit-bar-enter { animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both; }
+.trae-edit-bar-leave { pointer-events: none; animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel-leave { pointer-events: none; animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel [data-trae-tooltip] { position: relative; }
+.trae-edit-panel [data-trae-tooltip]::after { content: attr(data-trae-tooltip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: var(--trae-layer-edit-tooltip); padding: 6px 10px; border-radius: 6px; background: var(--trae-bg-invert, var(--bg-bg-invert)); color: var(--trae-text-onaccent, var(--text-text-onaccent)); box-shadow: var(--trae-floating-shadow); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; letter-spacing: 0.039px; white-space: nowrap; pointer-events: none; box-sizing: border-box; opacity: 0; transform: translateX(-50%); visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]::before { content: ""; position: absolute; left: 50%; bottom: calc(100% + 5px); z-index: var(--trae-layer-edit-tooltip); width: 8px; height: 4px; background: var(--trae-bg-invert, var(--bg-bg-invert)); clip-path: polygon(0px 0px, 100% 0px, 50% 100%); transform: translateX(-50%); pointer-events: none; opacity: 0; visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]:hover::after, .trae-edit-panel [data-trae-tooltip]:focus-visible::after, .trae-edit-panel [data-trae-tooltip]:hover::before, .trae-edit-panel [data-trae-tooltip]:focus-visible::before { opacity: 1; visibility: visible; }
+.trae-comment-btn { justify-content: center; cursor: pointer; transition: background-color 0.15s; }
+.trae-comment-btn:disabled { cursor: not-allowed; }
+.trae-comment-btn:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-comment-btn-primary { background: var(--trae-bg-invert); color: var(--trae-text-onaccent); }
+.trae-comment-btn-primary:hover:not(:disabled) { background: var(--trae-bg-invert-hover); }
+.trae-comment-btn-primary:active:not(:disabled) { background: var(--trae-bg-invert-active); }
+.trae-comment-btn-primary:disabled { background: var(--trae-bg-invert-disabled); color: var(--trae-text-disabled); }
+.trae-comment-btn-secondary { background: var(--trae-bg-overlay-l2); color: var(--trae-text-default); }
+.trae-comment-btn-secondary:hover:not(:disabled) { background: var(--trae-bg-overlay-l3); }
+.trae-comment-btn-secondary:active:not(:disabled) { background: var(--trae-bg-overlay-l4); }
+.trae-comment-btn-secondary:disabled { background: var(--trae-bg-overlay-l2); color: var(--trae-text-disabled); }
+.trae-comment-btn-text { background: transparent; color: var(--trae-text-default); }
+.trae-comment-btn-text:hover:not(:disabled) { border-radius: 8px; background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1)); color: var(--trae-text-default-hover); }
+.trae-comment-btn-text:active:not(:disabled) { border-radius: 8px; background: var(--trae-bg-overlay-l2); color: var(--trae-text-default-active); }
+.trae-comment-btn-text:disabled { background: transparent; color: var(--trae-text-disabled); }
+.trae-marking-btn { justify-content: center; }
+.trae-marking-btn:hover:not(:disabled) { background: var(--trae-bg-overlay-l1) !important; }
+.trae-marking-btn-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn:active:not(:disabled) { background: var(--trae-bg-overlay-l2) !important; }
+.trae-marking-btn:disabled { color: var(--trae-text-disabled) !important; cursor: not-allowed !important; }
+.trae-action-button-shortcut { display: flex; align-items: center; gap: 2px; color: var(--trae-icon-secondary); flex-shrink: 0; }
+.trae-shortcut-container { display: flex; align-items: center; gap: 2px; }
+.trae-shortcut-key { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 12px; color: var(--trae-icon-secondary); }
+.trae-add-to-chat-divider { width: 2px; height: 12px; padding: 0px 6px; box-sizing: content-box; background-clip: content-box; background-color: var(--trae-border-l2); flex-shrink: 0; }
+.trae-editor-view { display: flex; flex-direction: column; width: 320px; padding: 8px; background: transparent; }
+.trae-editor-text-container { display: flex; align-items: center; padding: 8px; background: var(--trae-bg-overlay-l1); border: 1px solid var(--trae-border-l3); border-radius: 4px; gap: 8px; }
+.trae-editor-textarea { flex: 1 1 0%; padding: 0px 2px; border: none; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; line-height: 20px; color: var(--trae-text-default); resize: none; outline: none; overflow-y: auto; max-height: 140px; }
+.trae-editor-textarea::placeholder { color: var(--trae-text-tertiary); }
+.trae-editor-action-bar { display: flex; align-items: center; justify-content: flex-end; gap: 4px; max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.2s ease-out, opacity 0.2s ease-out, margin-top 0.2s ease-out; }
+.trae-editor-action-bar-visible { max-height: 32px; opacity: 1; margin-top: 8px; }
+.trae-editor-cancel-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 4px; background: var(--trae-bg-overlay-l2); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-cancel-button:hover { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-cancel-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 8px; background: var(--trae-bg-invert); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-submit-button:hover { background: var(--trae-bg-invert-hover); }
+.trae-editor-submit-button:active { background: var(--trae-bg-invert-active); }
+.trae-editor-submit-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-submit-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-onaccent); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-icon { display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; color: var(--trae-icon-onaccent); flex-shrink: 0; }
+.trae-success-view { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0px 12px; height: 32px; white-space: nowrap; }
+.trae-success-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-status-success); flex-shrink: 0; }
+.trae-success-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 400; line-height: 18px; color: var(--trae-text-default); user-select: none; }</style></head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1 class="title">2026定价表</h1>
+      <div class="save-state" id="saveState">已自动保存 · 18:27</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnTpl">⬇ 下载导入模板</button>
+      <button class="btn" id="btnImport">⬆ 导入 Excel</button>
+      <button class="btn" id="btnExport">⬇ 导出 Excel</button>
+      <button class="btn primary" id="btnAddGroup">＋ 添加商品分组</button>
+      <input type="file" id="fileImport" accept=".xlsx,.xls" style="display:none">
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="搜索分组名称…">
+      <button class="search-clear" id="searchClear" style="display:none" title="清空">✕</button>
+    </div>
+  </div>
+
+  <div id="groups"><div class="group"><div class="group-head"><input class="group-name" placeholder="分组名称"><span class="count-badge">1 个 SKU</span><span class="seg"><button type="button" class="seg-btn active">有国补</button><button type="button" class="seg-btn noguobu">无国补</button></span><button type="button" class="btn-params">⚙ 参数</button><span class="spacer"></span><button class="btn sm primary">＋ 添加一行</button><button class="btn sm danger ghost">删除分组</button></div><div class="params"><div class="param-item"><b>超级立减</b>&nbsp;售价 ×<input type="number" min="0" max="100" step="0.5">%</div><div class="param-item"><b>国补</b>&nbsp;(售价−立减−券) ×<input type="number" min="0" max="100" step="0.5">%</div><div class="tiers-box"><div class="tiers-title"><b style="color:var(--text)">优惠券档位</b>(按售价就高,只取一档)</div><div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div></div><button type="button" class="tier-add">＋ 添加档位</button></div><div class="param-note">默认值:超级立减 15% · 国补 15% · 券 满68减3 / 满118减5 / 满198减10 / 满298减20 / 满498减30 / 满698减50。比例框清空即恢复默认;参数对当前分组全部 SKU 生效,随导出保存。</div></div><div class="table-scroll"><table><thead><tr><th style="text-align:left">SKU 名称</th><th class="tg">目标到手价(元)</th><th>售价</th><th>一口价(元)</th><th>到手价</th><th class="intcol">取整一口价</th><th>超级立减</th><th>优惠券</th><th>国补</th><th>折扣</th><th></th></tr></thead><tbody><tr><td class="c-name"><input class="cell-in" placeholder="SKU 名称 / 规格"></td><td class="c-tg r"><input class="cell-in" type="number" min="0" step="0.01" placeholder="如 335.75"></td><td class="r">158.00</td><td class="c-lp r"><input class="cell-in" type="number" min="0" step="0.01" placeholder="如 1000"></td><td class="r"><span class="fin">109.65</span><div class="sub diff">目标 109.90 · -0.25</div></td><td class="c-int r"><input class="cell-in" type="number" min="0" step="1" placeholder="自动" title="默认=一口价去掉小数,可手动改成整数,优惠按此值计算"><div class="intsub">原值 316.59 · 去小数</div></td><td class="r">−24.00<div class="sub">售价×15% · 进位到元(原值23.70)</div></td><td class="r">−5.00<div class="sub">满118减5</div></td><td class="r">−19.35<div class="sub">(售价−立减−券)×15%</div></td><td class="r"><span class="zhe">3.5 折</span></td><td class="r"><button class="row-del" title="删除此行">✕</button></td></tr></tbody></table></div></div><div class="group"><div class="group-head"><input class="group-name" placeholder="分组名称"><span class="count-badge">1 个 SKU</span><span class="seg"><button type="button" class="seg-btn active">有国补</button><button type="button" class="seg-btn noguobu">无国补</button></span><button type="button" class="btn-params">⚙ 参数</button><span class="spacer"></span><button class="btn sm primary">＋ 添加一行</button><button class="btn sm danger ghost">删除分组</button></div><div class="params"><div class="param-item"><b>超级立减</b>&nbsp;售价 ×<input type="number" min="0" max="100" step="0.5">%</div><div class="param-item"><b>国补</b>&nbsp;(售价−立减−券) ×<input type="number" min="0" max="100" step="0.5">%</div><div class="tiers-box"><div class="tiers-title"><b style="color:var(--text)">优惠券档位</b>(按售价就高,只取一档)</div><div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div><div class="tier-row">满<input type="number" min="0" step="1">减<input type="number" min="0" step="1"><button type="button" class="tier-del" title="删除此档">✕</button></div></div><button type="button" class="tier-add">＋ 添加档位</button></div><div class="param-note">默认值:超级立减 15% · 国补 15% · 券 满68减3 / 满118减5 / 满198减10 / 满298减20 / 满498减30 / 满698减50。比例框清空即恢复默认;参数对当前分组全部 SKU 生效,随导出保存。</div></div><div class="table-scroll"><table><thead><tr><th style="text-align:left">SKU 名称</th><th class="tg">目标到手价(元)</th><th>售价</th><th>一口价(元)</th><th>到手价</th><th class="intcol">取整一口价</th><th>超级立减</th><th>优惠券</th><th>国补</th><th>折扣</th><th></th></tr></thead><tbody><tr><td class="c-name"><input class="cell-in" placeholder="SKU 名称 / 规格"></td><td class="c-tg r"><input class="cell-in" type="number" min="0" step="0.01" placeholder="如 335.75"></td><td class="r"><span style="color:var(--text-muted)">—</span></td><td class="c-lp r"><input class="cell-in" type="number" min="0" step="0.01" placeholder="如 1000"></td><td class="r"><span style="color:var(--text-muted)">—</span></td><td class="c-int r"><input class="cell-in" type="number" min="0" step="1" placeholder="自动" title="默认=一口价去掉小数,可手动改成整数,优惠按此值计算"><div class="intsub"></div></td><td class="r"><span style="color:var(--text-muted)">—</span></td><td class="r"><span style="color:var(--text-muted)">—</span></td><td class="r"><span style="color:var(--text-muted)">—</span></td><td class="r"><span style="color:var(--text-muted)">—</span></td><td class="r"><button class="row-del" title="删除此行">✕</button></td></tr></tbody></table></div></div></div>
+
+  <div class="empty-state" id="emptyState" style="display:none">
+    还没有任何数据。可先「下载导入模板」按格式填写后导入,或直接手动添加。
+    <br><button class="btn primary" id="btnAddGroup2">＋ 添加商品分组</button>
+  </div>
+
+  <div class="no-match" id="noMatch" style="display:none">
+    没有找到名称包含「<span id="noMatchKw"></span>」的分组。
+  </div>
+
+  <div class="rules rules-bottom">
+    <span><b>取整一口价</b> = 一口价去掉小数(如 110.48→110),可手动改,优惠按它计算</span><span class="dot">·</span>
+    <span><b>售价</b> = 取整一口价 × 50%</span><span class="dot">·</span>
+    <span><b>超级立减</b> = 售价 × 15%(&gt;100元进位到元;10~100进位到角;≤10保留分)</span><span class="dot">·</span>
+    <span><b>优惠券</b> 按售价就高:满68减3/118减5/198减10/298减20/498减30/698减50</span><span class="dot">·</span>
+    <span><b>国补</b> =(售价−立减−券)× 15%(分组切「无国补」时为0)</span><span class="dot">·</span>
+    <span><b>到手价</b> = 售价 − 立减 − 券 − 国补(无国补时不扣最后一项)</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var STORE_KEY = 'sku-discount-calc-table-v2';
+  var DEFAULT_TIERS = [[698,50],[498,30],[298,20],[198,10],[118,5],[68,3]];
+  var DEFAULT_SUP_PCT = 15, DEFAULT_GUO_PCT = 15;
+
+  /* ---------------- 计算核心(金额单位:分) ---------------- */
+  // 取分组参数(带默认值):{hasG, supPct, guoPct, tiers}
+  function groupParams(g){
+    var supPct = (g.supPct!=null && g.supPct!=='' && isFinite(Number(g.supPct))) ? Number(g.supPct) : DEFAULT_SUP_PCT;
+    var guoPct = (g.guoPct!=null && g.guoPct!=='' && isFinite(Number(g.guoPct))) ? Number(g.guoPct) : DEFAULT_GUO_PCT;
+    var tiers = null;
+    if(Array.isArray(g.tiers) && g.tiers.length){
+      tiers = g.tiers.map(function(t){ return [Number(t[0]), Number(t[1])]; })
+                     .filter(function(t){ return isFinite(t[0]) && t[0]>0 && isFinite(t[1]) && t[1]>=0; });
+    }
+    if(!tiers || !tiers.length) tiers = DEFAULT_TIERS.map(function(t){return t.slice();});
+    tiers.sort(function(a,b){ return b[0]-a[0]; });
+    return {hasG: g.guobu!==false, supPct:supPct, guoPct:guoPct, tiers:tiers};
+  }
+  function couponCents(saleCents, tiers){
+    for(var i=0;i<tiers.length;i++){ if(saleCents >= tiers[i][0]*100) return tiers[i][1]*100; }
+    return 0;
+  }
+  function tierLabel(S, tiers){
+    for(var i=0;i<tiers.length;i++){ if(S >= tiers[i][0]) return '满'+tiers[i][0]+'减'+tiers[i][1]; }
+    return '未达券门槛';
+  }
+  // 超级立减:入参售价(元)、立减比例(%),返回 {raw, val, rule}
+  function superCents(S, supPct){
+    var rate = (supPct==null ? DEFAULT_SUP_PCT : supPct)/100;
+    var saleCents = Math.round(S*100);
+    var raw = Math.round(saleCents*rate);
+    if(S > 100) return {raw:raw, val:Math.ceil(raw/100)*100, rule:'进位到元'};
+    if(S > 10)  return {raw:raw, val:Math.ceil(raw/10)*10,    rule:'进位到角'};
+    return {raw:raw, val:raw, rule:'保留分'};
+  }
+  // 正算:入参一口价(可为小数),内部先截断取整;p=groupParams(g)
+  function forward(lpRaw, p){
+    p = p || groupParams({});
+    var lp = Math.floor(Math.max(0, Number(lpRaw)||0));
+    var saleCents = lp*50, S = saleCents/100;
+    var sup = superCents(S, p.supPct);
+    var c = couponCents(saleCents, p.tiers);
+    var guo = p.hasG ? Math.round((saleCents - sup.val - c)*p.guoPct/100) : 0;
+    var fin = saleCents - sup.val - c - guo;
+    return {lp:lp, S:S, saleCents:saleCents, supVal:sup.val, supRaw:sup.raw, rule:sup.rule,
+            c:c, cLabel:tierLabel(S, p.tiers), guo:guo, hasGuoBu:p.hasG,
+            supPct:p.supPct, guoPct:p.guoPct, fin:fin, zhe: lp>0 ? fin/lp/10 : 0};
+  }
+  // 反推:目标到手价 → 连续一口价(保留小数)+ 截断取整值
+  function reverse(targetYuan, p){
+    p = p || groupParams({});
+    var T = Math.max(0, Number(targetYuan)||0);
+    var div = p.hasG ? (1 - p.guoPct/100) : 1;   // 有国补:到手=(售价-立减-券)×(1-国补率);无国补:到手=售价-立减-券
+    var cOptsMap = {0:1};
+    p.tiers.forEach(function(t){ cOptsMap[t[1]] = 1; });
+    var cOpts = Object.keys(cOptsMap).map(Number).sort(function(a,b){return a-b;});
+    var best = null;
+    for(var k=0;k<cOpts.length;k++){
+      var C = cOpts[k], S = T/div + C;
+      for(var i=0;i<25;i++){
+        var sup = superCents(S, p.supPct);
+        var Snew = T/div + sup.val/100 + C;
+        if(Math.abs(Snew-S) < 1e-7){ S = Snew; break; }
+        S = Snew;
+      }
+      var sup2 = superCents(S, p.supPct);
+      var saleCents = Math.round(S*100);
+      var realC = couponCents(saleCents, p.tiers);
+      var guo = p.hasG ? Math.round((saleCents - sup2.val - realC)*p.guoPct/100) : 0;
+      var fin = saleCents - sup2.val - realC - guo;
+      var d = fin/100 - T;
+      var score = Math.abs(d) + (d<=0 ? 0 : 0.5);
+      if(!best || score < best.score) best = {S:S, score:score};
+    }
+    var lpCont = best.S*2;
+    lpCont = Math.round(lpCont*100)/100;
+    var lpInt = Math.floor(lpCont);
+    return {lpCont:lpCont, lpInt:lpInt, f:forward(lpInt, p)};
+  }
+  function fmt(cents){ return (cents/100).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmt2(yuan){ return (yuan).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function debounce(fn, ms){ var t; return function(){ var a=arguments,th=this; clearTimeout(t); t=setTimeout(function(){ fn.apply(th,a); }, ms); }; }
+
+  /* ---------------- 数据 ---------------- */
+  var groups = load() || [
+    { id:uid(), name:'调料罐', skus:[
+      {id:uid(), name:'SKU 1 · 标准款', lp:1000, target:null},
+      {id:uid(), name:'SKU 2 · 礼盒款', lp:null, target:219}
+    ]},
+    { id:uid(), name:'保温杯', skus:[
+      {id:uid(), name:'SKU 1 · 500ml', lp:500, target:null}
+    ]}
+  ];
+  // 初始化:只有目标到手价、没有一口价的行,先反推填入连续一口价
+  groups.forEach(function(g){
+    if(g.guobu===undefined) g.guobu = true;
+    g.skus.forEach(function(s){
+      if((s.lp==null || s.lp==='') && s.target>0){ var r = reverse(s.target, groupParams(g)); s.lp = r.lpCont; s.intLp = r.lpInt; }
+    });
+  });
+  function load(){
+    try{ var d = JSON.parse(localStorage.getItem(STORE_KEY)); if(d && d.groups) return d.groups; }catch(e){}
+    return null;
+  }
+  var save = debounce(function(){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify({groups:groups}));
+      document.getElementById('saveState').textContent = '已自动保存 · ' + new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    }catch(e){}
+  }, 300);
+
+  /* ---------------- 渲染 ---------------- */
+  var groupsEl = document.getElementById('groups');
+  var emptyEl = document.getElementById('emptyState');
+  var noMatchEl = document.getElementById('noMatch');
+  var searchKw = '';
+
+  function renderAll(){
+    groupsEl.innerHTML = '';
+    var kw = searchKw.trim();
+    var visible = kw ? groups.filter(function(g){ return (g.name||'').toLowerCase().indexOf(kw.toLowerCase()) >= 0; }) : groups;
+    visible.forEach(function(g){ groupsEl.appendChild(buildGroup(g)); });
+    emptyEl.style.display = groups.length ? 'none' : 'block';
+    noMatchEl.style.display = (kw && groups.length && !visible.length) ? 'block' : 'none';
+    document.getElementById('noMatchKw').textContent = kw;
+    save();
+  }
+
+  var searchInput = document.getElementById('searchInput');
+  var searchClear = document.getElementById('searchClear');
+  searchInput.addEventListener('input', function(){
+    searchKw = searchInput.value;
+    searchClear.style.display = searchKw ? 'block' : 'none';
+    renderAll();
+  });
+  searchClear.addEventListener('click', function(){
+    searchInput.value = ''; searchKw = ''; searchClear.style.display = 'none';
+    searchInput.focus(); renderAll();
+  });
+
+  function buildGroup(g){
+    var box = document.createElement('div');
+    box.className = 'group';
+
+    var head = document.createElement('div');
+    head.className = 'group-head';
+    var name = document.createElement('input');
+    name.className = 'group-name'; name.value = g.name; name.placeholder = '分组名称';
+    name.addEventListener('input', function(){ g.name = name.value; save(); });
+    var badge = document.createElement('span');
+    badge.className = 'count-badge'; badge.textContent = g.skus.length + ' 个 SKU';
+    if(g.guobu===undefined) g.guobu = true;
+    var seg = document.createElement('span'); seg.className = 'seg';
+    var btnYes = document.createElement('button');
+    btnYes.type = 'button'; btnYes.className = 'seg-btn' + (g.guobu ? ' active' : ''); btnYes.textContent = '有国补';
+    var btnNo = document.createElement('button');
+    btnNo.type = 'button'; btnNo.className = 'seg-btn noguobu' + (!g.guobu ? ' active' : ''); btnNo.textContent = '无国补';
+    btnYes.addEventListener('click', function(){ if(!g.guobu){ g.guobu = true; renderAll(); } });
+    btnNo.addEventListener('click', function(){ if(g.guobu){ g.guobu = false; renderAll(); } });
+    seg.appendChild(btnYes); seg.appendChild(btnNo);
+
+    // ---- 参数设置(立减比例 / 国补比例 / 优惠券档位) ----
+    if(!Array.isArray(g.tiers)) g.tiers = DEFAULT_TIERS.map(function(t){return t.slice();});
+    var btnParams = document.createElement('button');
+    btnParams.type = 'button'; btnParams.className = 'btn-params'; btnParams.textContent = '⚙ 参数';
+    var paramsBox = document.createElement('div'); paramsBox.className = 'params';
+
+    var pSup = document.createElement('div'); pSup.className = 'param-item';
+    pSup.innerHTML = '<b>超级立减</b>&nbsp;售价 ×';
+    var supIn = document.createElement('input');
+    supIn.type = 'number'; supIn.min = '0'; supIn.max = '100'; supIn.step = '0.5';
+    supIn.value = (g.supPct!=null && g.supPct!=='') ? g.supPct : DEFAULT_SUP_PCT;
+    pSup.appendChild(supIn); pSup.appendChild(document.createTextNode('%'));
+    supIn.addEventListener('input', function(){
+      g.supPct = supIn.value==='' ? null : Math.max(0, Number(supIn.value)||0);
+      save(); refreshRows();
+    });
+
+    var pGuo = document.createElement('div'); pGuo.className = 'param-item';
+    pGuo.innerHTML = '<b>国补</b>&nbsp;(售价−立减−券) ×';
+    var guoIn = document.createElement('input');
+    guoIn.type = 'number'; guoIn.min = '0'; guoIn.max = '100'; guoIn.step = '0.5'; guoIn.disabled = !g.guobu;
+    guoIn.value = (g.guoPct!=null && g.guoPct!=='') ? g.guoPct : DEFAULT_GUO_PCT;
+    pGuo.appendChild(guoIn); pGuo.appendChild(document.createTextNode('%'));
+    guoIn.addEventListener('input', function(){
+      g.guoPct = guoIn.value==='' ? null : Math.max(0, Number(guoIn.value)||0);
+      save(); refreshRows();
+    });
+
+    var pTiers = document.createElement('div'); pTiers.className = 'tiers-box';
+    var tiersTitle = document.createElement('div'); tiersTitle.className = 'tiers-title';
+    tiersTitle.innerHTML = '<b style="color:var(--text)">优惠券档位</b>(按售价就高,只取一档)';
+    var tiersList = document.createElement('div');
+    function renderTiers(){
+      tiersList.innerHTML = '';
+      g.tiers.forEach(function(t, idx){
+        var row = document.createElement('div'); row.className = 'tier-row';
+        row.appendChild(document.createTextNode('满'));
+        var inMin = document.createElement('input');
+        inMin.type = 'number'; inMin.min = '0'; inMin.step = '1'; inMin.value = t[0];
+        inMin.addEventListener('input', function(){
+          g.tiers[idx][0] = inMin.value==='' ? 0 : Math.max(0, Number(inMin.value)||0);
+          save(); refreshRows();
+        });
+        row.appendChild(inMin);
+        row.appendChild(document.createTextNode('减'));
+        var inOff = document.createElement('input');
+        inOff.type = 'number'; inOff.min = '0'; inOff.step = '1'; inOff.value = t[1];
+        inOff.addEventListener('input', function(){
+          g.tiers[idx][1] = inOff.value==='' ? 0 : Math.max(0, Number(inOff.value)||0);
+          save(); refreshRows();
+        });
+        row.appendChild(inOff);
+        var del = document.createElement('button');
+        del.type = 'button'; del.className = 'tier-del'; del.textContent = '✕'; del.title = '删除此档';
+        del.addEventListener('click', function(){
+          g.tiers.splice(idx, 1);
+          renderTiers(); save(); refreshRows();
+        });
+        row.appendChild(del);
+        tiersList.appendChild(row);
+      });
+    }
+    renderTiers();
+    var tierAdd = document.createElement('button');
+    tierAdd.type = 'button'; tierAdd.className = 'tier-add'; tierAdd.textContent = '＋ 添加档位';
+    tierAdd.addEventListener('click', function(){
+      g.tiers.push([100, 0]);
+      renderTiers(); save(); refreshRows();
+    });
+    pTiers.appendChild(tiersTitle); pTiers.appendChild(tiersList); pTiers.appendChild(tierAdd);
+
+    var note = document.createElement('div'); note.className = 'param-note';
+    note.textContent = '默认值:超级立减 15% · 国补 15% · 券 满68减3 / 满118减5 / 满198减10 / 满298减20 / 满498减30 / 满698减50。比例框清空即恢复默认;参数对当前分组全部 SKU 生效,随导出保存。';
+    paramsBox.appendChild(pSup); paramsBox.appendChild(pGuo); paramsBox.appendChild(pTiers); paramsBox.appendChild(note);
+    btnParams.addEventListener('click', function(){
+      var open = paramsBox.classList.toggle('open');
+      btnParams.classList.toggle('on', open);
+    });
+
+    var spacer = document.createElement('span'); spacer.className = 'spacer';
+    var addRow = document.createElement('button');
+    addRow.className = 'btn sm primary'; addRow.textContent = '＋ 添加一行';
+    addRow.addEventListener('click', function(){
+      g.skus.push({id:uid(), name:'SKU '+(g.skus.length+1), lp:null, target:null});
+      renderAll();
+    });
+    var delG = document.createElement('button');
+    delG.className = 'btn sm danger ghost'; delG.textContent = '删除分组';
+    delG.addEventListener('click', function(){
+      if(confirm('确定删除分组「'+g.name+'」及其全部行?')){
+        groups = groups.filter(function(x){ return x.id!==g.id; });
+        renderAll();
+      }
+    });
+    head.appendChild(name); head.appendChild(badge); head.appendChild(seg); head.appendChild(btnParams); head.appendChild(spacer);
+    head.appendChild(addRow); head.appendChild(delG);
+    box.appendChild(head);
+    box.appendChild(paramsBox);
+
+    // 参数变化时只重算各行数值,不重建 DOM(避免输入失焦)
+    function refreshRows(){
+      Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function(tr){
+        if(typeof tr._refresh === 'function') tr._refresh();
+      });
+    }
+
+    var scroll = document.createElement('div');
+    scroll.className = 'table-scroll';
+    var table = document.createElement('table');
+    table.innerHTML =
+      '<thead><tr>' +
+      '<th style="text-align:left">SKU 名称</th>' +
+      '<th class="tg">目标到手价(元)</th>' +
+      '<th>售价</th>' +
+      '<th>一口价(元)</th>' +
+      '<th>到手价</th>' +
+      '<th class="intcol">取整一口价</th>' +
+      '<th>超级立减</th><th>优惠券</th><th>国补</th><th>折扣</th><th></th>' +
+      '</tr></thead>';
+    var tbody = document.createElement('tbody');
+    if(!g.skus.length){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="11" class="empty-row">该分组还没有数据,点「＋ 添加一行」或导入 Excel。</td>';
+      tbody.appendChild(tr);
+    }
+    g.skus.forEach(function(s){ tbody.appendChild(buildRow(g, s)); });
+    table.appendChild(tbody);
+    scroll.appendChild(table);
+    box.appendChild(scroll);
+    return box;
+  }
+
+  function buildRow(g, s){
+    var tr = document.createElement('tr');
+
+    var tdName = document.createElement('td'); tdName.className = 'c-name';
+    var nameIn = document.createElement('input');
+    nameIn.className = 'cell-in'; nameIn.value = s.name||''; nameIn.placeholder = 'SKU 名称 / 规格';
+    nameIn.addEventListener('input', function(){ s.name = nameIn.value; save(); });
+    tdName.appendChild(nameIn);
+
+    var tdLp = document.createElement('td'); tdLp.className = 'c-lp r';
+    var lpIn = document.createElement('input');
+    lpIn.className = 'cell-in'; lpIn.type = 'number'; lpIn.min = '0'; lpIn.step = '0.01';
+    lpIn.value = (s.lp==null?'':s.lp); lpIn.placeholder = '如 1000';
+    lpIn.addEventListener('input', function(){
+      s.lp = lpIn.value==='' ? null : Math.max(0, Number(lpIn.value)||0);
+      // 一口价变化时,取整一口价自动同步为"去小数"值(用户仍可再手动改)
+      s.intLp = (s.lp!=null && s.lp>0) ? Math.floor(s.lp) : null;
+      save(); refresh();
+    });
+    tdLp.appendChild(lpIn);
+
+    var tdInt = document.createElement('td'); tdInt.className = 'c-int r';
+    var intIn = document.createElement('input');
+    intIn.className = 'cell-in'; intIn.type = 'number'; intIn.min = '0'; intIn.step = '1';
+    intIn.value = (s.intLp==null?'':s.intLp); intIn.placeholder = '自动';
+    intIn.title = '默认=一口价去掉小数,可手动改成整数,优惠按此值计算';
+    var intSub = document.createElement('div'); intSub.className = 'intsub';
+    intIn.addEventListener('input', function(){
+      s.intLp = intIn.value==='' ? null : Math.max(0, Math.floor(Number(intIn.value)||0));
+      save(); refresh();
+    });
+    tdInt.appendChild(intIn); tdInt.appendChild(intSub);
+
+    var tdTg = document.createElement('td'); tdTg.className = 'c-tg r';
+    var tgIn = document.createElement('input');
+    tgIn.className = 'cell-in'; tgIn.type = 'number'; tgIn.min = '0'; tgIn.step = '0.01';
+    tgIn.value = (s.target==null?'':s.target); tgIn.placeholder = '如 335.75';
+    tgIn.addEventListener('input', debounce(function(){
+      s.target = tgIn.value==='' ? null : Math.max(0, Number(tgIn.value)||0);
+      if(s.target!=null && s.target>0){
+        var r = reverse(s.target, groupParams(g));
+        s.lp = r.lpCont;
+        s.intLp = r.lpInt;
+        lpIn.value = r.lpCont;
+      }
+      save(); refresh();
+    }, 350));
+    tdTg.appendChild(tgIn);
+
+    var tdSale = document.createElement('td'); tdSale.className = 'r';
+    var tdSup  = document.createElement('td'); tdSup.className = 'r';
+    var tdC    = document.createElement('td'); tdC.className = 'r';
+    var tdGuo  = document.createElement('td'); tdGuo.className = 'r';
+    var tdFin  = document.createElement('td'); tdFin.className = 'r';
+    var tdZhe  = document.createElement('td'); tdZhe.className = 'r';
+    var tdDel  = document.createElement('td'); tdDel.className = 'r';
+    var delBtn = document.createElement('button');
+    delBtn.className = 'row-del'; delBtn.textContent = '✕'; delBtn.title = '删除此行';
+    delBtn.addEventListener('click', function(){
+      g.skus = g.skus.filter(function(x){ return x.id!==s.id; });
+      renderAll();
+    });
+    tdDel.appendChild(delBtn);
+
+    tr.appendChild(tdName); tr.appendChild(tdTg); tr.appendChild(tdSale);
+    tr.appendChild(tdLp); tr.appendChild(tdFin); tr.appendChild(tdInt);
+    tr.appendChild(tdSup); tr.appendChild(tdC); tr.appendChild(tdGuo); tr.appendChild(tdZhe); tr.appendChild(tdDel);
+
+    function refresh(){
+      var lpNum  = (s.lp!=null && s.lp!=='') ? Number(s.lp) : null;
+      var intNum = (s.intLp!=null && s.intLp!=='' && Number(s.intLp)>0) ? Math.floor(Number(s.intLp)) : null;
+      // 生效取整价:手填取整价优先;否则一口价去小数;都没有则留空
+      var autoInt = (lpNum!=null && lpNum>0) ? Math.floor(lpNum) : null;
+      var eff = intNum!=null ? intNum : autoInt;
+      if(document.activeElement!==intIn){ intIn.value = (eff!=null ? eff : ''); }
+      var f = eff!=null ? forward(eff, groupParams(g)) : null;
+      if(!f){
+        intSub.textContent = ''; intSub.classList.remove('manual');
+        [tdSale,tdSup,tdC,tdGuo,tdFin,tdZhe].forEach(function(td){ td.innerHTML='<span style="color:var(--text-muted)">—</span>'; });
+        return;
+      }
+      // 取整列下方提示
+      intSub.classList.remove('manual');
+      if(intNum!=null && autoInt!=null && intNum!==autoInt){
+        intSub.textContent = '已手动改 · 自动值为 '+autoInt;
+        intSub.classList.add('manual');
+      } else if(intNum!=null && autoInt==null){
+        intSub.textContent = '手动填写';
+        intSub.classList.add('manual');
+      } else if(lpNum!=null && lpNum!==f.lp){
+        intSub.textContent = '原值 ' + fmt2(lpNum) + ' · 去小数';
+      } else {
+        intSub.textContent = '';
+      }
+      tdSale.textContent = fmt(f.saleCents);
+      tdSup.innerHTML  = '−'+fmt(f.supVal) + '<div class="sub">售价×'+f.supPct+'% · '+f.rule+(f.supVal!==f.supRaw?'(原值'+fmt(f.supRaw)+')':'')+'</div>';
+      tdC.innerHTML    = '−'+fmt(f.c) + '<div class="sub">'+f.cLabel+'</div>';
+      if(f.hasGuoBu){
+        tdGuo.innerHTML  = '−'+fmt(f.guo) + '<div class="sub">(售价−立减−券)×'+f.guoPct+'%</div>';
+      } else {
+        tdGuo.innerHTML  = '<span style="color:var(--text-muted)">—</span><div class="sub">无国补</div>';
+      }
+      var diffHtml = '';
+      if(s.target!=null && s.target>0){
+        var d = f.fin/100 - s.target;
+        diffHtml = '<div class="sub diff">目标 '+fmt2(s.target)+' · '+(d>=0?'+':'')+d.toFixed(2)+'</div>';
+      }
+      tdFin.innerHTML  = '<span class="fin">'+fmt(f.fin)+'</span>' + diffHtml;
+      tdZhe.innerHTML  = '<span class="zhe">'+f.zhe.toFixed(1)+' 折</span>';
+    }
+    refresh();
+    tr._refresh = refresh;
+    return tr;
+  }
+
+  /* ---------------- Excel 导入 / 导出 / 模板 ---------------- */
+  var HEADERS = ['商品分组','SKU名称','目标到手价(元)','售价(自动)','一口价(元)','到手价(自动)','取整一口价(可手填)','超级立减(自动)','优惠券(自动)','国补(自动)','折扣(自动)','国补方式(有/无)','立减%(默认15)','国补%(默认15)','券档位(选填)'];
+
+  function tiersToText(tiers){
+    return tiers.slice().sort(function(a,b){return a[0]-b[0];}).map(function(t){ return t[0]+'减'+t[1]; }).join('/');
+  }
+  // 解析券档位文本,如 "68减3/118减5;满198减10" → [[68,3],[118,5],[198,10]]
+  function parseTiersText(text){
+    if(!text) return null;
+    var out = [];
+    String(text).split(/[\/;；,，\n]/).forEach(function(part){
+      var nums = part.match(/\d+(\.\d+)?/g);
+      if(nums && nums.length>=2){
+        var min = parseFloat(nums[0]), off = parseFloat(nums[1]);
+        if(isFinite(min) && min>0 && isFinite(off) && off>=0) out.push([min, off]);
+      }
+    });
+    return out.length ? out : null;
+  }
+
+  function collectRows(){
+    var rows = [];
+    groups.forEach(function(g){
+      var pp = groupParams(g);
+      g.skus.forEach(function(s){
+        var hasLp = (s.lp!=null && s.lp!=='' && Number(s.lp)>0);
+        var f = hasLp ? forward(s.lp, pp) : null;
+        rows.push({
+          grp:g.name, name:s.name||'',
+          lp:(s.lp==null?'':s.lp), intp:f?f.lp:'', tg:(s.target==null?'':s.target),
+          sale:f?(f.saleCents/100):'', sup:f?(f.supVal/100):'', c:f?(f.c/100):'',
+          guo:f?(f.guo/100):'', fin:f?(f.fin/100):'', zhe:f?f.zhe.toFixed(1)+'折':'',
+          mode:pp.hasG?'有':'无',
+          supPct:pp.supPct, guoPct:pp.guoPct, tiersText:tiersToText(pp.tiers)
+        });
+      });
+    });
+    return rows;
+  }
+
+  document.getElementById('btnExport').addEventListener('click', function(){
+    if(typeof XLSX === 'undefined'){ alert('Excel 组件未加载,请检查网络后刷新。'); return; }
+    var aoa = [HEADERS];
+    collectRows().forEach(function(r){
+      aoa.push([r.grp,r.name,r.tg,r.sale,r.lp,r.fin,r.intp,r.sup,r.c,r.guo,r.zhe,r.mode,r.supPct,r.guoPct,r.tiersText]);
+    });
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = [{wch:14},{wch:22},{wch:17},{wch:11},{wch:13},{wch:12},{wch:15},{wch:13},{wch:11},{wch:11},{wch:10},{wch:13},{wch:12},{wch:12},{wch:30}];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SKU优惠计算');
+    XLSX.writeFile(wb, 'SKU优惠计算_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  });
+
+  document.getElementById('fileImport').addEventListener('change', function(ev){
+    var file = ev.target.files[0]; ev.target.value = '';
+    if(!file) return;
+    if(typeof XLSX === 'undefined'){ alert('Excel 组件未加载,请检查网络后刷新。'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e){
+      try{
+        var wb = XLSX.read(e.target.result, {type:'array'});
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var aoa = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+        var hi = -1, col = {};
+        for(var i=0;i<aoa.length && hi<0;i++){
+          aoa[i].forEach(function(cell, j){
+            var t = String(cell||'');
+            if(t.indexOf('分组')>=0) col.grp = j;
+            else if(t.indexOf('方式')>=0) col.mode = j;
+            else if(t.indexOf('券档')>=0 || t.indexOf('档位')>=0) col.tiers = j;
+            else if(t.indexOf('立减%')>=0 || t.indexOf('立减比例')>=0) col.supPct = j;
+            else if(t.indexOf('国补%')>=0 || t.indexOf('国补比例')>=0) col.guoPct = j;
+            else if(t.indexOf('取整')>=0) col.intp = j;
+            else if(t.indexOf('一口价')>=0) col.lp = j;
+            else if(t.indexOf('目标')>=0) col.tg = j;
+            else if(t.indexOf('SKU')>=0 || t.indexOf('名称')>=0) col.name = j;
+          });
+          if(col.lp!=null || col.name!=null) hi = i;
+        }
+        if(hi < 0){ alert('没识别到表头,请使用最新模板导入。'); return; }
+        var ng = [], gmap = {}, lastGrp = '未分组';
+        for(var r2=hi+1; r2<aoa.length; r2++){
+          var row = aoa[r2]; if(!row) continue;
+          var gname = col.grp!=null ? String(row[col.grp]!=null?row[col.grp]:'').trim() : '';
+          if(gname) lastGrp = gname;
+          var nm = col.name!=null ? String(row[col.name]!=null?row[col.name]:'').trim() : '';
+          var lpv = col.lp!=null ? parseFloat(row[col.lp]) : NaN;
+          var tgv = col.tg!=null ? parseFloat(row[col.tg]) : NaN;
+          var inv = col.intp!=null ? parseFloat(row[col.intp]) : NaN;
+          var modev = col.mode!=null ? String(row[col.mode]!=null?row[col.mode]:'').trim() : '';
+          var supPctv = col.supPct!=null ? parseFloat(row[col.supPct]) : NaN;
+          var guoPctv = col.guoPct!=null ? parseFloat(row[col.guoPct]) : NaN;
+          var tiersv = col.tiers!=null ? parseTiersText(row[col.tiers]) : null;
+          var hasG = modev.indexOf('无') < 0;   // 含"无"→无国补;空或"有"→有国补
+          var lp = isFinite(lpv) && lpv>0 ? lpv : null;
+          var tg = isFinite(tgv) && tgv>0 ? tgv : null;
+          var intLp = isFinite(inv) && inv>0 ? Math.floor(inv) : null;
+          var hasParams = modev || (isFinite(supPctv)&&supPctv>0) || (isFinite(guoPctv)&&guoPctv>0) || tiersv;
+          if(!nm && lp==null && tg==null && intLp==null && !hasParams) continue;
+          if(!gmap[lastGrp]){
+            gmap[lastGrp] = {id:uid(), name:lastGrp, skus:[], guobu:hasG};
+            if(isFinite(supPctv)&&supPctv>0) gmap[lastGrp].supPct = supPctv;
+            if(isFinite(guoPctv)&&guoPctv>0) gmap[lastGrp].guoPct = guoPctv;
+            if(tiersv) gmap[lastGrp].tiers = tiersv;
+            ng.push(gmap[lastGrp]);
+          } else {
+            if(modev) gmap[lastGrp].guobu = hasG;
+            if(isFinite(supPctv)&&supPctv>0) gmap[lastGrp].supPct = supPctv;
+            if(isFinite(guoPctv)&&guoPctv>0) gmap[lastGrp].guoPct = guoPctv;
+            if(tiersv) gmap[lastGrp].tiers = tiersv;
+          }
+          if(lp==null && tg!=null){
+            var rv = reverse(tg, groupParams(gmap[lastGrp]));
+            lp = rv.lpCont;
+            if(intLp==null) intLp = rv.lpInt;
+          }
+          gmap[lastGrp].skus.push({id:uid(), name:nm||('SKU '+(gmap[lastGrp].skus.length+1)), lp:lp, intLp:intLp, target:tg});
+        }
+        if(!ng.length){ alert('文件里没有可导入的数据行。'); return; }
+        if(confirm('共识别 '+ng.reduce(function(n,g){return n+g.skus.length;},0)+' 个 SKU、'+ng.length+' 个分组。\n导入将'+(groups.length?'替换当前全部数据':'新建数据')+',确定继续?')){
+          groups = ng; renderAll();
+        }
+      }catch(err){ alert('导入失败:' + err.message); }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+  document.getElementById('btnImport').addEventListener('click', function(){
+    document.getElementById('fileImport').click();
+  });
+
+  /* 浏览器内生成模板(含公式+缓存值,与交付的 xlsx 模板同结构) */
+  document.getElementById('btnTpl').addEventListener('click', function(){
+    if(typeof XLSX === 'undefined'){ alert('Excel 组件未加载,请检查网络后刷新。'); return; }
+    // [分组, SKU名称, 目标到手价(C), 一口价(E), 国补方式(L), 立减%(M), 国补%(N), 券档位(O)]
+    var defTiers = '68减3/118减5/198减10/298减20/498减30/698减50';
+    var samples = [
+      ['调料罐','SKU 1 · 标准款','',1000,'有',15,15,defTiers],
+      ['调料罐','SKU 2 · 礼盒款',219,'','有',15,15,defTiers],
+      ['保温杯','SKU 1 · 500ml','',500,'无',15,15,defTiers]
+    ];
+    var aoa = [HEADERS];
+    for(var i=0;i<50;i++){
+      var s = samples[i] || ['','','','','','','',''];
+      aoa.push([s[0],s[1],s[2],'',s[3],'','','','','','',s[4],s[5],s[6],s[7]]);
+    }
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = [{wch:14},{wch:22},{wch:17},{wch:11},{wch:13},{wch:12},{wch:15},{wch:13},{wch:11},{wch:11},{wch:10},{wch:13},{wch:12},{wch:12},{wch:30}];
+    // 列位:C=目标到手价 D=售价 E=一口价 F=到手价 G=取整一口价 H=超级立减 I=优惠券 J=国补 K=折扣
+    //       L=国补方式 M=立减% N=国补% O=券档位(网页导入识别;Excel 内券列按默认档位计算)
+    for(var r=2; r<=51; r++){
+      var D='D'+r, E='E'+r, F='F'+r, G='G'+r, H='H'+r, I='I'+r, J='J'+r, K='K'+r, L='L'+r, M='M'+r, N='N'+r;
+      var rM = 'IF($'+M+'="",15,$'+M+')', rN = 'IF($'+N+'="",15,$'+N+')';
+      ws[G] = {t:'n', f:'IF($'+E+'="","",INT($'+E+'))'};
+      ws[D] = {t:'n', f:'IF($'+G+'="","",$'+G+'*0.5)'};
+      ws[H] = {t:'n', f:'IF($'+D+'="","",IF($'+D+'>100,CEILING($'+D+'*'+rM+'/100,1),IF($'+D+'>10,CEILING($'+D+'*'+rM+'/100,0.1),ROUND($'+D+'*'+rM+'/100,2))))'};
+      ws[I] = {t:'n', f:'IF($'+D+'="","",IF($'+D+'>=698,50,IF($'+D+'>=498,30,IF($'+D+'>=298,20,IF($'+D+'>=198,10,IF($'+D+'>=118,5,IF($'+D+'>=68,3,0)))))))'};
+      ws[J] = {t:'n', f:'IF($'+D+'="","",IF($'+L+'="无",0,ROUND(($'+D+'-$'+H+'-$'+I+')*'+rN+'/100,2)))'};
+      ws[F] = {t:'n', f:'IF($'+D+'="","",ROUND($'+D+'-$'+H+'-$'+I+'-$'+J+',2))'};
+      ws[K] = {t:'s', f:'IF(OR($'+D+'="",$'+G+'=0),"",ROUND($'+F+'/$'+G+'*10,1)&"折")'};
+    }
+    function cv(ref, v){ ws[ref] = {t:'n', f:ws[ref].f, v:v}; }
+    cv('G2',1000); cv('D2',500); cv('H2',75); cv('I2',30); cv('J2',59.25); cv('F2',335.75); ws['K2']={t:'s',f:ws['K2'].f,v:'3.4折'};
+    // 第4行示例为无国补:国补0,到手=250-38-10=202,4.0折
+    cv('G4',500);  cv('D4',250); cv('H4',38); cv('I4',10); cv('J4',0);     cv('F4',202);    ws['K4']={t:'s',f:ws['K4'].f,v:'4.0折'};
+
+    var noteAoa = [
+      ['SKU 优惠计算器 · 填写说明'],[''],
+      ['一、只需填写蓝色字体的列(商品分组、SKU名称、目标到手价、一口价、取整一口价),其余列自动计算:'],
+      ['    1. 商品分组:相同分组名的行归为同一组。'],
+      ['    2. SKU名称:规格/型号,随意填写。'],
+      ['    3. 目标到手价(元·选填):仅填它时,导入网页后自动反推一口价;两列都填以一口价为准。'],
+      ['    4. 一口价(元):商品标价;由网页反推生成时可能带小数,属正常。'],
+      ['    5. 取整一口价:默认自动=一口价去掉小数;也可直接手动改成整数,改后优惠按手填值计算。'],
+      ['    6. 国补方式(有/无):填"有"按国补逻辑算;填"无"则不扣国补,到手价=售价−立减−券。留空按"有"。'],
+      ['    7. 立减% / 国补%(选填):超级立减、国补的百分比,留空默认 15。'],
+      ['    8. 券档位(选填):格式"满减"用斜杠分隔,如 68减3/118减5/198减10;留空用默认6档。'],
+      ['       注意:Excel 内立减/国补列会按比例自动重算;券档位自定义后请以网页导入计算为准。'],
+      [''],
+      ['二、自动列说明:'],
+      ['    取整一口价 = 一口价去掉小数部分(向下截断,如 110.48 → 110),可手动覆盖;后续优惠全部按它计算。'],
+      ['    售价 = 取整一口价 × 50%'],
+      ['    超级立减 = 售价 × 立减%(默认15%;售价>100元进位到元;10~100元进位到角;≤10元保留分)'],
+      ['    优惠券按售价就高:满68减3 / 满118减5 / 满198减10 / 满298减20 / 满498减30 / 满698减50'],
+      ['    国补 =(售价 − 立减 − 券)× 国补%(默认15%);到手价 = 售价 − 立减 − 券 − 国补'],
+      ['    (国补方式填"无"时:国补=0,到手价 = 售价 − 立减 − 券)'],
+      [''],
+      ['三、第 2~4 行为示例,正式使用可删除或覆盖;一行一个 SKU。']
+    ];
+    var ws2 = XLSX.utils.aoa_to_sheet(noteAoa);
+    ws2['!cols'] = [{wch:95}];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SKU录入模板');
+    XLSX.utils.book_append_sheet(wb, ws2, '填写说明');
+    XLSX.writeFile(wb, 'SKU优惠计算器_导入模板.xlsx');
+  });
+
+  function addGroup(){
+    groups.push({id:uid(), name:'新分组 '+(groups.length+1), skus:[{id:uid(), name:'SKU 1', lp:null, target:null}]});
+    searchInput.value = ''; searchKw = ''; searchClear.style.display = 'none';
+    renderAll();
+  }
+  document.getElementById('btnAddGroup').addEventListener('click', addGroup);
+  document.getElementById('btnAddGroup2').addEventListener('click', addGroup);
+
+  renderAll();
+})();
+</script>
+
+
+<div data-trae-edit-ui="true" class="trae-image-download-btn" title="Download image" style="position: fixed; display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: var(--trae-bg-menu, #222427); border: 1px solid var(--trae-border-l2, rgba(255,255,255,0.12)); box-shadow: var(--trae-floating-shadow, 0px 2px 8px 0px rgba(0,0,0,0.2)); color: var(--trae-icon-default, #f5f9fe); cursor: pointer; z-index: 89990; transition: background 0.15s; pointer-events: auto;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2v8m0 0L5 7m3 3l3-3M3 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div></body></html>
